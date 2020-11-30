@@ -26,6 +26,7 @@ Authentication::Authentication(QWidget *parent) :
 Authentication::~Authentication()
 {
     delete ui;
+
     delete this->db_choice;
 }
 
@@ -52,6 +53,7 @@ void Authentication::on_pushButton_ok_clicked()
 void Authentication::on_pushButton_servers_clicked()
 {
     this->hide();
+
     this->db_choice->showNormal();
 
     this->is_autentificate = true;
