@@ -17,6 +17,8 @@ public:
     explicit Authentication(QWidget *parent = nullptr);
     ~Authentication();
 
+    void init_list();
+
 signals:
     void autentificated();
 
@@ -28,11 +30,11 @@ private slots:
     void on_pushButton_info_clicked();
 
 
-    void on_comboBox_activated(const QString &arg1);
+    void on_comboBox_activated(int index);
 
 private:
 
-    void init_list();
+
 
     Ui::Authentication *ui;
     bool is_autentificate = false;

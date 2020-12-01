@@ -2,7 +2,7 @@
 #include "db_choice.h"
 #include "ui_db_choice.h"
 #include <QVector>
-
+#include <Authentication/authentication.h>
 
 
 DB_choice::DB_choice(QWidget *parent, QWidget * caller) :
@@ -90,7 +90,7 @@ void DB_choice::on_pushButton_ok_clicked()
     this->settings->endArray();
 
 
-
+    dynamic_cast<Authentication *>(this->caller)->init_list();
     this->caller->showNormal();
     this->close();
 }

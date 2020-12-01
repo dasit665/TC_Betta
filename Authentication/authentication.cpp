@@ -2,6 +2,8 @@
 #include "ui_authentication.h"
 #include "QMessageBox"
 #include "QDebug"
+#include <QString>
+#include <QStringList>
 #include "DB_choice/db_choice.h"
 
 Authentication::Authentication(QWidget *parent) :
@@ -37,6 +39,43 @@ Authentication::~Authentication()
 
 void Authentication::init_list()
 {
+    this->ui->comboBox->clear();
+
+    auto size = this->settings->beginReadArray("DBLogins");
+    QStringList dnss = QStringList();
+    QString login;
+    QString server;
+
+    for (int i = 0; i < size; ++i)
+    {
+        this->settings->setArrayIndex(i);
+        login.clear();
+
+        login +="DNS: ";
+        login += this->settings->value("DNS").value<QString>();
+        login+="; ";
+
+        login +="Login: ";
+        login += this->settings->value("Login").value<QString>();
+        login+=";";
+
+//        login += this->settings->value("Password").value<QString>();
+//        login+=";";
+
+
+        dnss.append(login);
+    }
+
+
+    this->ui->comboBox->addItems(dnss);
+
+
+    settings->setArrayIndex(settings->value("LastServerIndex", 0).toInt());
+
+    this->ui->lineEdit_server->setText(settings->value("DNS").toString());
+
+    this->settings->endArray();
+
 }
 
 void Authentication::on_pushButton_cancel_clicked()
@@ -74,9 +113,22 @@ void Authentication::on_pushButton_info_clicked()
 }
 
 
-void Authentication::on_comboBox_activated(const QString &arg1)
+void Authentication::on_comboBox_activated(int index)
 {
-    qInfo()<<"Changed";
-}
+    qInfo()<<"mark";
+    settings->setValue("LastServerIndex", index);
 
+    this->settings->beginReadArray("DBLogins");
+
+    QString Login = "";
+
+    settings->setArrayIndex(index);
+
+    Login += settings->value("DNS").value<QString>();
+
+    this->ui->lineEdit_server->setText(Login);
+
+    this->settings->endArray();
+
+}
 
