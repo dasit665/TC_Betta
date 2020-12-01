@@ -28,9 +28,16 @@ private slots:
     void on_pushButton_info_clicked();
 
 
+    void on_comboBox_activated(const QString &arg1);
+
 private:
+
+    void init_list();
+
     Ui::Authentication *ui;
     bool is_autentificate = false;
+
+    QSettings * settings;
 
     QShortcut * Ret_key, * Enter_key;
 

@@ -44,14 +44,10 @@ void DB_choice::init_table()
 
     settings->endArray();
 
-
-    this->ui->tableWidget->clear();
-
-    this->ui->tableWidget->insertRow(size);
-
-
     for(int i = 0; i < size; i++)
     {
+        this->ui->tableWidget->insertRow(i);
+
         this->ui->tableWidget->setItem(i, 0, new QTableWidgetItem(DBLogins.at(i).DNS));
         this->ui->tableWidget->setItem(i, 1, new QTableWidgetItem(DBLogins.at(i).Login));
         this->ui->tableWidget->setItem(i, 2, new QTableWidgetItem(DBLogins.at(i).Password));
@@ -68,6 +64,33 @@ DB_choice::~DB_choice()
 
 void DB_choice::on_pushButton_ok_clicked()
 {
+    QVector<DBLogin> logins = QVector<DBLogin>();
+
+    for(int i = 0; i < this->ui->tableWidget->rowCount(); i++)
+    {
+        DBLogin login;
+
+        login.DNS = this->ui->tableWidget->item(i, 0)->text();
+        login.Login = this->ui->tableWidget->item(i, 1)->text();
+        login.Password = this->ui->tableWidget->item(i, 2)->text();
+
+        logins.append(login);
+    }
+
+    this->settings->clear();
+
+    this->settings->beginWriteArray("DBLogins");
+    for (int i = 0; i < logins.count(); ++i)
+    {
+        settings->setArrayIndex(i);
+        this->settings->setValue("DNS", logins.at(i).DNS);
+        this->settings->setValue("Login", logins.at(i).Login);
+        this->settings->setValue("Password", logins.at(i).Password);
+    }
+    this->settings->endArray();
+
+
+
     this->caller->showNormal();
     this->close();
 }
