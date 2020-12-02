@@ -6,6 +6,8 @@
 #include <QStringList>
 #include "DB_choice/db_choice.h"
 
+
+
 Authentication::Authentication(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Authentication)
@@ -26,6 +28,7 @@ Authentication::Authentication(QWidget *parent) :
     connect(Enter_key, SIGNAL(activated()), this, SLOT(on_pushButton_ok_clicked()));
 
     this->init_list();
+    this->init_line();
 
 }
 
@@ -59,23 +62,55 @@ void Authentication::init_list()
         login += this->settings->value("Login").value<QString>();
         login+=";";
 
-//        login += this->settings->value("Password").value<QString>();
-//        login+=";";
-
-
         dnss.append(login);
     }
 
 
     this->ui->comboBox->addItems(dnss);
 
+    this->settings->endArray();
 
-    settings->setArrayIndex(settings->value("LastServerIndex", 0).toInt());
+    this->ui->comboBox->setCurrentIndex(this->settings->value("LastServerIndex", 0).toInt());
 
-    this->ui->lineEdit_server->setText(settings->value("DNS").toString());
+}
+
+void Authentication::init_line()
+{
+
+    this->ui->lineEdit_server->setStyleSheet("background: rgb(139, 0, 0); color: rgb(255, 255, 255);");
+    this->ui->pushButton_ok->setEnabled(false);
+
+    auto index = settings->value("LastServerIndex", 0).toInt();
+
+    QString server = "";
+
+    this->settings->beginReadArray("DBLogins");
+
+    settings->setArrayIndex(index);
+
+
+    server += settings->value("DNS").value<QString>();
+
+    this->ui->lineEdit_server->setText(server);
 
     this->settings->endArray();
 
+
+    this->settings->beginReadArray("DBLogins");
+    this->settings->setArrayIndex(index);
+
+    this->database.setPort(5432);
+    this->database.setHostName(this->settings->value("DNS").toString());
+    this->database.setUserName(this->settings->value("Login").toString());
+    this->database.setPassword(this->settings->value("Password").toString());
+    this->settings->endArray();
+
+
+    if(this->database.open()==true)
+    {
+        this->ui->lineEdit_server->setStyleSheet("background: rgb(0, 255, 0); color: rgb(0, 0, 255);");
+        this->ui->pushButton_ok->setEnabled(true);
+    }
 }
 
 void Authentication::on_pushButton_cancel_clicked()
@@ -115,20 +150,20 @@ void Authentication::on_pushButton_info_clicked()
 
 void Authentication::on_comboBox_activated(int index)
 {
-    qInfo()<<"mark";
     settings->setValue("LastServerIndex", index);
 
-    this->settings->beginReadArray("DBLogins");
+//    this->settings->beginReadArray("DBLogins");
 
-    QString Login = "";
+//    QString Login = "";
 
-    settings->setArrayIndex(index);
+//    settings->setArrayIndex(index);
 
-    Login += settings->value("DNS").value<QString>();
+//    Login += settings->value("DNS").value<QString>();
 
-    this->ui->lineEdit_server->setText(Login);
+//    this->ui->lineEdit_server->setText(Login);
 
-    this->settings->endArray();
+//    this->settings->endArray();
 
+    this->init_line();
 }
 

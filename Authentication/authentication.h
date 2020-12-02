@@ -5,6 +5,11 @@
 #include <QShortcut>
 #include "DB_choice/db_choice.h"
 
+#include <QtSql>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+
 namespace Ui {
 class Authentication;
 }
@@ -18,6 +23,7 @@ public:
     ~Authentication();
 
     void init_list();
+    void init_line();
 
 signals:
     void autentificated();
@@ -34,10 +40,9 @@ private slots:
 
 private:
 
-
-
     Ui::Authentication *ui;
     bool is_autentificate = false;
+    QSqlDatabase database = QSqlDatabase::addDatabase("QPSQL");
 
     QSettings * settings;
 

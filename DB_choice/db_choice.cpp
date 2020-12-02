@@ -25,7 +25,6 @@ void DB_choice::init_table()
     if(size == 0)
     {
         settings->endArray();
-        qInfo()<<"is 0";
         return;
     }
 
@@ -91,6 +90,7 @@ void DB_choice::on_pushButton_ok_clicked()
 
 
     dynamic_cast<Authentication *>(this->caller)->init_list();
+    dynamic_cast<Authentication *>(this->caller)->init_line();
     this->caller->showNormal();
     this->close();
 }
