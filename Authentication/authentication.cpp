@@ -120,17 +120,48 @@ void Authentication::on_pushButton_cancel_clicked()
 
 void Authentication::on_pushButton_ok_clicked()
 {
-
-    if(this->is_autentificate)
+    if(this->database.open()==true)
     {
-        //QMessageBox::information(nullptr, "Информация", "Аутентификация пройденна", QMessageBox::Ok);
-        emit this->autentificated();
-        this->close();
+        qInfo()<<"database is open";
+
+        QString query_string = QString("select * from app_func_get_ppo_id(%1, '%2')")
+                .arg(this->ui->spinBox_number->value())
+                .arg(this->ui->lineEdit_password->text());
+
+
+//        QSqlQuery query;
+//        query.prepare("select * from app_func_get_ppo_id(:number, :password)");
+//        query.bindValue(":number", this->ui->spinBox_number->value());
+//        query.bindValue(":password", this->ui->lineEdit_password->text());
+
+
+        auto query = this->database.exec(query_string);
+
+
+        if(query.exec() == true)
+        {
+            qInfo()<<"in if";
+
+            while(query.next()==true)
+            {
+                qInfo()<<query.value(0).toInt();
+            }
+        }
+        else
+        {
+            qInfo()<<query.lastQuery();
+            qInfo()<<query.lastError().text();
+        }
+
     }
     else
     {
-        QMessageBox::critical(nullptr, "Внимание!!!", "Аутентификация не пройденна");
+        QMessageBox::critical(nullptr, "Ошибка открытия БД", this->database.lastError().text());
+        return;
     }
+
+    this->database.close();
+
 }
 
 void Authentication::on_pushButton_servers_clicked()
@@ -151,18 +182,6 @@ void Authentication::on_pushButton_info_clicked()
 void Authentication::on_comboBox_activated(int index)
 {
     settings->setValue("LastServerIndex", index);
-
-//    this->settings->beginReadArray("DBLogins");
-
-//    QString Login = "";
-
-//    settings->setArrayIndex(index);
-
-//    Login += settings->value("DNS").value<QString>();
-
-//    this->ui->lineEdit_server->setText(Login);
-
-//    this->settings->endArray();
 
     this->init_line();
 }
