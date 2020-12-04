@@ -6,6 +6,11 @@
 #include <QStringList>
 #include "DB_choice/db_choice.h"
 
+#include <QtSql>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+
 
 
 Authentication::Authentication(QWidget *parent) :
@@ -54,13 +59,17 @@ void Authentication::init_list()
         this->settings->setArrayIndex(i);
         login.clear();
 
-        login +="DNS: ";
         login += this->settings->value("DNS").value<QString>();
-        login+="; ";
+        login +="=>";
 
-        login +="Login: ";
+        login += this->settings->value("Port").toString();
+        login +="=>";
+
+        login += this->settings->value("DBName").value<QString>();
+        login +="=>";
+
         login += this->settings->value("Login").value<QString>();
-        login+=";";
+        login +=";";
 
         dnss.append(login);
     }
@@ -71,6 +80,16 @@ void Authentication::init_list()
     this->settings->endArray();
 
     this->ui->comboBox->setCurrentIndex(this->settings->value("LastServerIndex", 0).toInt());
+
+    this->ui->spinBox_number->clear();
+
+
+    QWidget::setTabOrder(this->ui->spinBox_number, this->ui->lineEdit_password);
+    QWidget::setTabOrder(this->ui->lineEdit_password, this->ui->comboBox);
+    QWidget::setTabOrder(this->ui->comboBox, this->ui->pushButton_ok);
+    QWidget::setTabOrder(this->ui->pushButton_ok, this->ui->pushButton_cancel);
+    QWidget::setTabOrder(this->ui->pushButton_cancel, this->ui->pushButton_info);
+    QWidget::setTabOrder(this->ui->pushButton_info, this->ui->pushButton_servers);
 
 }
 
@@ -99,7 +118,8 @@ void Authentication::init_line()
     this->settings->beginReadArray("DBLogins");
     this->settings->setArrayIndex(index);
 
-    this->database.setPort(5432);
+    this->database.setPort(this->settings->value("Port").toInt());
+    this->database.setDatabaseName(this->settings->value("DBName").toString());
     this->database.setHostName(this->settings->value("DNS").toString());
     this->database.setUserName(this->settings->value("Login").toString());
     this->database.setPassword(this->settings->value("Password").toString());
@@ -124,19 +144,18 @@ void Authentication::on_pushButton_ok_clicked()
     {
         qInfo()<<"database is open";
 
-        QString query_string = QString("select * from app_func_get_ppo_id(%1, '%2')")
-                .arg(this->ui->spinBox_number->value())
-                .arg(this->ui->lineEdit_password->text());
+//        QString query_string = QString("select * from app_func_get_ppo_id(%1, '%2')")
+//                .arg(this->ui->spinBox_number->value())
+//                .arg(this->ui->lineEdit_password->text());
+
+
+        QSqlQuery query;
+        query.prepare("select * from app_func_get_ppo_id(?, ?)");
+        query.bindValue(0, this->ui->spinBox_number->value());
+        query.bindValue(1, this->ui->lineEdit_password->text());
 
 
 //        QSqlQuery query;
-//        query.prepare("select * from app_func_get_ppo_id(:number, :password)");
-//        query.bindValue(":number", this->ui->spinBox_number->value());
-//        query.bindValue(":password", this->ui->lineEdit_password->text());
-
-
-        auto query = this->database.exec(query_string);
-
 
         if(query.exec() == true)
         {

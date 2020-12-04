@@ -312,6 +312,18 @@ border-color: black;</string>
     </widget>
    </item>
   </layout>
+  <zorder>label_pc</zorder>
+  <zorder>label_password</zorder>
+  <zorder>label_server</zorder>
+  <zorder>label_info</zorder>
+  <zorder>lineEdit_password</zorder>
+  <zorder>lineEdit_server</zorder>
+  <zorder>label_server_name</zorder>
+  <zorder>label_name</zorder>
+  <zorder>line</zorder>
+  <zorder>label_header</zorder>
+  <zorder>spinBox_number</zorder>
+  <zorder>comboBox</zorder>
  </widget>
  <resources/>
  <connections/>

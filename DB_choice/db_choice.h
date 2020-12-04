@@ -11,12 +11,16 @@
 struct DBLogin
 {
     QString DNS;
+    int Port;
+    QString DBName;
     QString Login;
     QString Password;
 
-    DBLogin(QString DNS = "", QString Login = "", QString Password = "")
+    DBLogin(QString DNS = "", int Port =0, QString DBName ="", QString Login = "", QString Password = "")
     {
         this->DNS = DNS;
+        this->Port = Port;
+        this->DBName = DBName;
         this->Login = Login;
         this->Password = Password;
     }
