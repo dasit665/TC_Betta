@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QShortcut>
+#include <QSettings>
 
 namespace Ui {
 class AdditionalWindow;
@@ -21,7 +22,10 @@ public:
 
 
 private:
+    QSettings * settings = new QSettings("RUSH","TC_Betta");
+
     void init_shortcut_keys();
+    void init_footer();
 
 private slots:
     void on_escape_pressed();

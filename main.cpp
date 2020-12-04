@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
     aut.show();
     aut.move((screenGeometry.width() - aut.width())/2, (screenGeometry.height() - aut.height())/2);
 
-    QObject::connect(&aut, &Authentication::autentificated, [&mw ]()
+    QObject::connect(&aut, &Authentication::autentificated, [&]()
     {
-        qInfo()<<"connect is rised";
         mw.showMaximized();
+        aut.close();
     });
 
     return a.exec();

@@ -140,43 +140,46 @@ void Authentication::on_pushButton_cancel_clicked()
 
 void Authentication::on_pushButton_ok_clicked()
 {
+
+    int ppo_id = 0;
+
     if(this->database.open()==true)
     {
-        qInfo()<<"database is open";
-
-//        QString query_string = QString("select * from app_func_get_ppo_id(%1, '%2')")
-//                .arg(this->ui->spinBox_number->value())
-//                .arg(this->ui->lineEdit_password->text());
-
-
         QSqlQuery query;
         query.prepare("select * from app_func_get_ppo_id(?, ?)");
         query.bindValue(0, this->ui->spinBox_number->value());
         query.bindValue(1, this->ui->lineEdit_password->text());
 
 
-//        QSqlQuery query;
-
         if(query.exec() == true)
         {
-            qInfo()<<"in if";
-
             while(query.next()==true)
             {
-                qInfo()<<query.value(0).toInt();
+                ppo_id = query.value(0).toInt();
             }
         }
         else
         {
-            qInfo()<<query.lastQuery();
-            qInfo()<<query.lastError().text();
+            QMessageBox::critical(nullptr, "Error PostgreSQL", this->database.lastError().text());
+            return;
         }
 
     }
     else
     {
-        QMessageBox::critical(nullptr, "Ошибка открытия БД", this->database.lastError().text());
+        QMessageBox::critical(nullptr, "Error PostgreSQL", this->database.lastError().text());
         return;
+    }
+
+    if(ppo_id!=0)
+    {
+        this->settings->setValue("PPO_ID", ppo_id);
+        this->settings->setValue("PPO_Number", this->ui->spinBox_number->text());
+        emit autentificated();
+    }
+    else
+    {
+        QMessageBox::critical(nullptr, "Authentication Error", "PPO number or password is not valid");
     }
 
     this->database.close();

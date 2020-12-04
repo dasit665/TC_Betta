@@ -61,6 +61,12 @@ void MainWindow::shotr_keys_initialising()
 
 void MainWindow::on_pushButton_more_clicked()
 {
+    if(this->aw != 0)
+    {
+        delete this->aw;
+    }
+    this->aw = new  AdditionalWindow();
+
     this->aw->show();
     this->aw->move((this->screen_width - aw->width())/2, (this->screen_heigth - aw->height())/2);
 }
