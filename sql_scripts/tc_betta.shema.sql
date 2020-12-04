@@ -17,15 +17,15 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: tc_betta; Type: DATABASE; Schema: -; Owner: tc_client
+-- Name: tc_main; Type: DATABASE; Schema: -; Owner: tc_client
 --
 
-CREATE DATABASE tc_betta WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_UA.UTF-8' LC_CTYPE = 'ru_UA.UTF-8';
+CREATE DATABASE tc_main WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_UA.UTF-8' LC_CTYPE = 'ru_UA.UTF-8';
 
 
-ALTER DATABASE tc_betta OWNER TO tc_client;
+ALTER DATABASE tc_main OWNER TO tc_client;
 
-\connect tc_betta
+\connect tc_main
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -53,10 +53,10 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
--- Name: app_func_get_ppo_id(integer, text); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: app_func_get_ppo_id(integer, character varying); Type: FUNCTION; Schema: public; Owner: tc_client
 --
 
-CREATE FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password text) RETURNS integer
+CREATE FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password character varying) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 	declare
@@ -84,10 +84,10 @@ CREATE FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password tex
 	$$;
 
 
-ALTER FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password text) OWNER TO postgres;
+ALTER FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password character varying) OWNER TO tc_client;
 
 --
--- Name: app_proc_add_ppo(integer, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: app_proc_add_ppo(integer, character varying); Type: PROCEDURE; Schema: public; Owner: tc_client
 --
 
 CREATE PROCEDURE public.app_proc_add_ppo(ppo_id integer, user_password character varying)
@@ -98,14 +98,14 @@ CREATE PROCEDURE public.app_proc_add_ppo(ppo_id integer, user_password character
 $$;
 
 
-ALTER PROCEDURE public.app_proc_add_ppo(ppo_id integer, user_password character varying) OWNER TO postgres;
+ALTER PROCEDURE public.app_proc_add_ppo(ppo_id integer, user_password character varying) OWNER TO tc_client;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: ppos; Type: TABLE; Schema: public; Owner: postgres
+-- Name: ppos; Type: TABLE; Schema: public; Owner: tc_client
 --
 
 CREATE TABLE public.ppos (
@@ -115,10 +115,10 @@ CREATE TABLE public.ppos (
 );
 
 
-ALTER TABLE public.ppos OWNER TO postgres;
+ALTER TABLE public.ppos OWNER TO tc_client;
 
 --
--- Name: ppos_ppos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: ppos_ppos_id_seq; Type: SEQUENCE; Schema: public; Owner: tc_client
 --
 
 ALTER TABLE public.ppos ALTER COLUMN ppos_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -132,291 +132,11 @@ ALTER TABLE public.ppos ALTER COLUMN ppos_id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- Name: ppos ppos_ppo_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ppos ppos_ppo_number_key; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
 ALTER TABLE ONLY public.ppos
     ADD CONSTRAINT ppos_ppo_number_key UNIQUE (ppo_number);
-
-
---
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
---
-
-GRANT ALL ON SCHEMA public TO tc_client;
-
-
---
--- Name: FUNCTION app_func_get_ppo_id(number_ppo integer, user_password text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.app_func_get_ppo_id(number_ppo integer, user_password text) TO tc_client;
-
-
---
--- Name: FUNCTION armor(bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.armor(bytea) TO tc_client;
-
-
---
--- Name: FUNCTION armor(bytea, text[], text[]); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.armor(bytea, text[], text[]) TO tc_client;
-
-
---
--- Name: FUNCTION crypt(text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.crypt(text, text) TO tc_client;
-
-
---
--- Name: FUNCTION dearmor(text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.dearmor(text) TO tc_client;
-
-
---
--- Name: FUNCTION decrypt(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.decrypt(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION decrypt_iv(bytea, bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.decrypt_iv(bytea, bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION digest(bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.digest(bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION digest(text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.digest(text, text) TO tc_client;
-
-
---
--- Name: FUNCTION encrypt(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.encrypt(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION encrypt_iv(bytea, bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.encrypt_iv(bytea, bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION gen_random_bytes(integer); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.gen_random_bytes(integer) TO tc_client;
-
-
---
--- Name: FUNCTION gen_random_uuid(); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.gen_random_uuid() TO tc_client;
-
-
---
--- Name: FUNCTION gen_salt(text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.gen_salt(text) TO tc_client;
-
-
---
--- Name: FUNCTION gen_salt(text, integer); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.gen_salt(text, integer) TO tc_client;
-
-
---
--- Name: FUNCTION hmac(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.hmac(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION hmac(text, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.hmac(text, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_armor_headers(text, OUT key text, OUT value text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_armor_headers(text, OUT key text, OUT value text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_key_id(bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_key_id(bytea) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt(bytea, bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt(bytea, bytea) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt(bytea, bytea, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt(bytea, bytea, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt_bytea(bytea, bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt_bytea(bytea, bytea) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt_bytea(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt_bytea(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_decrypt_bytea(bytea, bytea, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_decrypt_bytea(bytea, bytea, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_encrypt(text, bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_encrypt(text, bytea) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_encrypt(text, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_encrypt(text, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_encrypt_bytea(bytea, bytea); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_encrypt_bytea(bytea, bytea) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_pub_encrypt_bytea(bytea, bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_pub_encrypt_bytea(bytea, bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_decrypt(bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_decrypt(bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_decrypt(bytea, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_decrypt(bytea, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_decrypt_bytea(bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_decrypt_bytea(bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_decrypt_bytea(bytea, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_decrypt_bytea(bytea, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_encrypt(text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_encrypt(text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_encrypt(text, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_encrypt(text, text, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_encrypt_bytea(bytea, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_encrypt_bytea(bytea, text) TO tc_client;
-
-
---
--- Name: FUNCTION pgp_sym_encrypt_bytea(bytea, text, text); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION public.pgp_sym_encrypt_bytea(bytea, text, text) TO tc_client;
-
-
---
--- Name: TABLE ppos; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON TABLE public.ppos TO tc_client;
-
-
---
--- Name: SEQUENCE ppos_ppos_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON SEQUENCE public.ppos_ppos_id_seq TO tc_client;
 
 
 --
