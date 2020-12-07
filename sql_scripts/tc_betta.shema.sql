@@ -132,11 +132,99 @@ ALTER TABLE public.ppos ALTER COLUMN ppos_id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
+-- Name: product_types; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.product_types (
+    product_types_id integer NOT NULL,
+    type_name character varying,
+    type_description character varying
+);
+
+
+ALTER TABLE public.product_types OWNER TO tc_client;
+
+--
+-- Name: product_types_product_types_id_seq; Type: SEQUENCE; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE public.product_types ALTER COLUMN product_types_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.product_types_product_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: products; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.products (
+    products_id integer NOT NULL,
+    product_types_id integer NOT NULL,
+    product_name character varying,
+    product_code numeric(13,0) NOT NULL,
+    product_price money
+);
+
+
+ALTER TABLE public.products OWNER TO tc_client;
+
+--
+-- Name: products_products_id_seq; Type: SEQUENCE; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE public.products ALTER COLUMN products_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.products_products_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: products pk_broducts_id; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT pk_broducts_id PRIMARY KEY (products_id);
+
+
+--
+-- Name: product_types pk_product_types_id; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.product_types
+    ADD CONSTRAINT pk_product_types_id PRIMARY KEY (product_types_id);
+
+
+--
 -- Name: ppos ppos_ppo_number_key; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
 ALTER TABLE ONLY public.ppos
     ADD CONSTRAINT ppos_ppo_number_key UNIQUE (ppo_number);
+
+
+--
+-- Name: product_types uq_product_types; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.product_types
+    ADD CONSTRAINT uq_product_types UNIQUE (type_name);
+
+
+--
+-- Name: products fk_product_types_id; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT fk_product_types_id FOREIGN KEY (product_types_id) REFERENCES public.product_types(product_types_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
