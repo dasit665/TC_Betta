@@ -218,6 +218,22 @@ CREATE TABLE public.r_comps (
 ALTER TABLE public.r_comps OWNER TO tc_client;
 
 --
+-- Name: r_cr_uni_input; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.r_cr_uni_input (
+    ch_id integer NOT NULL,
+    uni_input_code integer NOT NULL,
+    uni_input_action integer NOT NULL,
+    uni_input_mask character varying(250),
+    notes character varying(250),
+    uni_input bit(1) NOT NULL
+);
+
+
+ALTER TABLE public.r_cr_uni_input OWNER TO tc_client;
+
+--
 -- Name: r_crmp; Type: TABLE; Schema: public; Owner: tc_client
 --
 
@@ -376,6 +392,107 @@ CREATE TABLE public.r_crs (
 ALTER TABLE public.r_crs OWNER TO tc_client;
 
 --
+-- Name: r_d_cards; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.r_d_cards (
+    ch_id integer NOT NULL,
+    comp_id integer NOT NULL,
+    d_card_id character varying(250) NOT NULL,
+    discount numeric(21,9) NOT NULL,
+    sum_cc numeric(21,9),
+    in_use bit(1) NOT NULL,
+    notes character varying(200),
+    value1 numeric(21,9) NOT NULL,
+    value2 numeric(21,9) NOT NULL,
+    value3 numeric(21,9) NOT NULL,
+    is_crd_card bit(1) NOT NULL,
+    note1 character varying(200),
+    e_date timestamp with time zone,
+    client_name character varying(4000),
+    dc_type_code integer NOT NULL,
+    birth_date timestamp with time zone,
+    fact_region character varying(250),
+    fact_district character varying(250),
+    fact_city character varying(250),
+    fact_street character varying(250),
+    fact_house character varying(250),
+    fact_block character varying(250),
+    fact_apt_no character varying(250),
+    fact_post_index character varying(50),
+    phone_mob character varying(1000),
+    phone_home character varying(20),
+    phone_work character varying(20),
+    e_mail character varying(250),
+    sum_bonus numeric(21,9) NOT NULL,
+    status integer NOT NULL,
+    b_date timestamp with time zone,
+    is_pay_card bit(1) NOT NULL,
+    auto_save_odd_money_to_processing bit(1) NOT NULL
+);
+
+
+ALTER TABLE public.r_d_cards OWNER TO tc_client;
+
+--
+-- Name: r_dc_group; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.r_dc_group (
+    ch_id integer NOT NULL,
+    dc_group_code integer NOT NULL,
+    dc_group_name character varying(500) NOT NULL,
+    date_create timestamp with time zone NOT NULL,
+    user_create character varying(150) NOT NULL,
+    date_change timestamp with time zone NOT NULL,
+    user_change character varying(150) NOT NULL,
+    date_begin timestamp with time zone,
+    date_end timestamp with time zone
+);
+
+
+ALTER TABLE public.r_dc_group OWNER TO tc_client;
+
+--
+-- Name: r_dc_group_ch_id_seq; Type: SEQUENCE; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE public.r_dc_group ALTER COLUMN ch_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.r_dc_group_ch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: r_dc_type_g; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.r_dc_type_g (
+    ch_id integer NOT NULL,
+    dc_type_g_code integer NOT NULL,
+    dc_type_g_name character varying(250) NOT NULL,
+    notes character varying(250),
+    main_dialog bit(1) NOT NULL,
+    close_dialog_after_enter bit(1) NOT NULL,
+    processing_id integer NOT NULL
+);
+
+
+ALTER TABLE public.r_dc_type_g OWNER TO tc_client;
+
+--
+-- Name: r_d_cards pk_r_compmdc; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.r_d_cards
+    ADD CONSTRAINT pk_r_compmdc PRIMARY KEY (d_card_id);
+
+
+--
 -- Name: r_comps pk_r_comps; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
@@ -405,6 +522,30 @@ ALTER TABLE ONLY public.r_crpos_pays
 
 ALTER TABLE ONLY public.r_crs
     ADD CONSTRAINT pk_r_crs PRIMARY KEY (crid);
+
+
+--
+-- Name: r_cr_uni_input pk_r_cruniinput; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.r_cr_uni_input
+    ADD CONSTRAINT pk_r_cruniinput PRIMARY KEY (uni_input_code);
+
+
+--
+-- Name: r_dc_group pk_r_dcgroup; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.r_dc_group
+    ADD CONSTRAINT pk_r_dcgroup PRIMARY KEY (ch_id, dc_group_code);
+
+
+--
+-- Name: r_dc_type_g pk_r_dctypeg; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.r_dc_type_g
+    ADD CONSTRAINT pk_r_dctypeg PRIMARY KEY (dc_type_g_code);
 
 
 --
