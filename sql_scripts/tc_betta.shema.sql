@@ -17,6 +17,28 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: tc_main; Type: DATABASE; Schema: -; Owner: tc_client
+--
+
+CREATE DATABASE tc_main WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_UA.UTF-8' LC_CTYPE = 'ru_UA.UTF-8';
+
+
+ALTER DATABASE tc_main OWNER TO tc_client;
+
+\connect tc_main
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -126,6 +148,7 @@ ALTER TABLE public.ppos ALTER COLUMN ppos_id ADD GENERATED ALWAYS AS IDENTITY (
 
 CREATE TABLE public.r_comps (
     ch_id integer NOT NULL,
+    cr_id integer NOT NULL,
     comp_id integer NOT NULL,
     comp_name character varying(200) NOT NULL,
     comp_short character varying(200),
@@ -250,7 +273,7 @@ ALTER TABLE public.r_crpos_pays OWNER TO tc_client;
 
 CREATE TABLE public.r_crs (
     ch_id integer NOT NULL,
-    crid smallint NOT NULL,
+    cr_id smallint NOT NULL,
     cr_name character varying(200) NOT NULL,
     notes character varying(200),
     fin_id character varying(250),
@@ -1449,6 +1472,19 @@ CREATE TABLE public.t_z_rep_t (
 ALTER TABLE public.t_z_rep_t OWNER TO tc_client;
 
 --
+-- Name: z_apps; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.z_apps (
+    app_code integer NOT NULL,
+    app_name character varying(250) NOT NULL,
+    app_info character varying(250)
+);
+
+
+ALTER TABLE public.z_apps OWNER TO tc_client;
+
+--
 -- Name: z_doc_dc; Type: TABLE; Schema: public; Owner: tc_client
 --
 
@@ -1460,6 +1496,38 @@ CREATE TABLE public.z_doc_dc (
 
 
 ALTER TABLE public.z_doc_dc OWNER TO tc_client;
+
+--
+-- Name: z_docs; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.z_docs (
+    doc_cat_code integer NOT NULL,
+    doc_grp_code integer DEFAULT 0 NOT NULL,
+    doc_code integer NOT NULL,
+    doc_name character varying(250) NOT NULL,
+    doc_info character varying(250),
+    form_class character varying(250),
+    code_field character varying(250),
+    name_field character varying(250),
+    sync_code integer DEFAULT 0 NOT NULL,
+    sync_type smallint DEFAULT 0 NOT NULL,
+    sync_fields character varying(250),
+    filter_before_open boolean DEFAULT false NOT NULL,
+    have_tax boolean DEFAULT false NOT NULL,
+    have_trans boolean DEFAULT false NOT NULL,
+    copy_type smallint DEFAULT 0 NOT NULL,
+    have_state boolean DEFAULT false NOT NULL,
+    update_ext_log boolean DEFAULT false NOT NULL,
+    balance_type smallint DEFAULT 0 NOT NULL,
+    link_e_exp character varying(250),
+    link_l_exp character varying(250),
+    balance_fe_sign smallint DEFAULT 0 NOT NULL,
+    tax_doc_type integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.z_docs OWNER TO tc_client;
 
 --
 -- Name: z_log_disc_exp; Type: TABLE; Schema: public; Owner: tc_client
@@ -1606,6 +1674,36 @@ CREATE TABLE public.z_metrica_events (
 ALTER TABLE public.z_metrica_events OWNER TO tc_client;
 
 --
+-- Name: z_tool_rep; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.z_tool_rep (
+    rep_tool_code integer NOT NULL,
+    rep_tool_name character varying(250) NOT NULL,
+    form_class character varying(250) NOT NULL,
+    is_int boolean NOT NULL,
+    rep_tool_cat_name character varying(250),
+    short_cut character varying(250)
+);
+
+
+ALTER TABLE public.z_tool_rep OWNER TO tc_client;
+
+--
+-- Name: z_var_pages; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.z_var_pages (
+    var_page_code integer NOT NULL,
+    var_page_name character varying(250) NOT NULL,
+    var_page_pos_id integer NOT NULL,
+    var_page_visible boolean NOT NULL
+);
+
+
+ALTER TABLE public.z_var_pages OWNER TO tc_client;
+
+--
 -- Name: z_vars; Type: TABLE; Schema: public; Owner: tc_client
 --
 
@@ -1627,494 +1725,6 @@ CREATE TABLE public.z_vars (
 
 
 ALTER TABLE public.z_vars OWNER TO tc_client;
-
---
--- Data for Name: logs; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.logs (text) FROM stdin;
-\.
-
-
---
--- Data for Name: ppos; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.ppos (ppos_id, ppo_number, password) FROM stdin;
-1	123	$1$KLOl7i7z$cArfYmtxZhNOEN6qbny/T0
-2	456	$1$IKEd5N2N$Ofjomx3qSSRKuY420LLDP0
-3	789	$1$1C48tNhn$emicSrLI5OiPAbg1yAEbE0
-\.
-
-
---
--- Data for Name: r_comps; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_comps (ch_id, comp_id, comp_name, comp_short, address, post_index, city, region, code, tax_reg_no, tax_code, tax_payer, comp_desc, contact, phone1, phone2, phone3, fax, e_mail, http, notes, code_id1, code_id2, code_id3, code_id4, code_id5, use_codes, plid, use_pl, discount, use_discount, pay_delay, use_pay_delay, max_credit, calc_max_credit, emp_id, contract1, contract2, contract3, license1, license2, license3, job1, job2, job3, tran_prc, more_prc, first_event_mode, comp_type, sys_tax_type, fix_tax_percent, in_stop_list, value1, value2, value3, pass_no, pass_ser, pass_date, pass_dept, comp_gr_id1, comp_gr_id2, comp_gr_id3, comp_gr_id4, comp_gr_id5, comp_name_full) FROM stdin;
-\.
-
-
---
--- Data for Name: r_cr_uni_input; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_cr_uni_input (ch_id, uni_input_code, uni_input_action, uni_input_mask, notes, uni_input) FROM stdin;
-\.
-
-
---
--- Data for Name: r_crmp; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_crmp (cr_id, prod_id, cr_prod_name, cr_prod_id, tax_id, sec_id, fixed_price, price_cc, decimal_qty, bar_code) FROM stdin;
-\.
-
-
---
--- Data for Name: r_crpos_pays; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_crpos_pays (cr_id, pos_pay_id, is_default) FROM stdin;
-\.
-
-
---
--- Data for Name: r_crs; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_crs (ch_id, crid, cr_name, notes, fin_id, fac_id, cr_port, cr_code, srv_id, auto_create_new_cheque, stock_id, sec_id, cash_type, use_prod_notes, baud_rate, led_type, cred_card_mask, max_change, can_edit_weight_qty, can_edit_price, can_edit_prod_id, can_enter_pos_discount, ask_pwd_cn, print_text_anull, ask_pwd_anull, print_report, use_dec_qty_bar_code, paper_warning, always_show_pos_editor, ask_pwd_cn_cheque, ask_pwd_suspend, ask_pwd_balance, ask_pwd_ret, max_suspended, ask_params_after_open, ask_params_before_close, show_pos_disc, show_cheque_disc, auto_sel_discs, ask_d_cards_after_open, ask_d_cards_before_close, can_enter_d_card, can_enter_code_id1, can_enter_code_id2, can_enter_code_id3, can_enter_code_id4, can_enter_code_id5, can_enter_notes, no_manual_d_card_enter, show_cancels, preview_report, dec_qty_from_ref, ask_visitors_after_open, ask_pwd_period_rep, print_report_ret, mixed_pays, print_report_mon_rec, print_report_mon_exp, ask_pwd_find, use_bar_code, use_stock_pl, open_money_box_on_deposit, ask_pwd_money_box, ask_pwd_d_card_find, auto_fill_pays, show_pos_edit_on_cancel, check_ret_sum, allow_invalid_mon_exp, cash_reg_mode, net_port, modem_id, modem_password, check_ret_pay_forms, print_report_z, print_report_x, print_discs, ask_pwd_deposit, print_after_send_order, scale_id, allow_qty_reduction, z_report_warning, pos_emp_id_type, use_emps, pos_emp_id, cheque_emp, ip, print_copy_for_card, group_prods, z_rep_after_shift, z_rep_exec_in_time, z_rep_shift_end_time, z_rep_exec_time, z_rep_shift_time_check, processing_id, user_name, user_password, print_info_anull, auto_update_taxes, collect_metrics, metric_max_days, backup_cr_journal_after_z_report, change_sum_warning, ask_pwd_pos_re_pay, cancel_m_discs_warning, async_cheque_input, backup_cr_journal_after_cheque_type, backup_cr_journal_cheque_timeout, backup_cr_journal_in_time, backup_cr_journal_exec_time, active, day_sale_sum_cc, shift_close_time, backup_cr_journal_text, backup_cr_journal_text_cheque_type, backup_cr_journal_text_start_date) FROM stdin;
-\.
-
-
---
--- Data for Name: r_d_cards; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_d_cards (ch_id, comp_id, d_card_id, discount, sum_cc, in_use, notes, value1, value2, value3, is_crd_card, note1, e_date, client_name, dc_type_code, birth_date, fact_region, fact_district, fact_city, fact_street, fact_house, fact_block, fact_apt_no, fact_post_index, phone_mob, phone_home, phone_work, e_mail, sum_bonus, status, b_date, is_pay_card, auto_save_odd_money_to_processing) FROM stdin;
-\.
-
-
---
--- Data for Name: r_dc_group; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_dc_group (ch_id, dc_group_code, dc_group_name, date_create, user_create, date_change, user_change, date_begin, date_end) FROM stdin;
-\.
-
-
---
--- Data for Name: r_dc_type_g; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_dc_type_g (ch_id, dc_type_gcode, dc_type_gname, notes, main_dialog, close_dialog_after_enter, processing_id) FROM stdin;
-\.
-
-
---
--- Data for Name: r_dc_types; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_dc_types (ch_id, dc_type_code, dc_type_name, value1, value2, value3, init_sum, prod_id, notes, max_qty, dc_type_gcode, deactivate_after_use, no_manual_dcard_enter) FROM stdin;
-\.
-
-
---
--- Data for Name: r_disc_dc; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_disc_dc (disc_code, dc_type_code, for_rec, for_exp) FROM stdin;
-\.
-
-
---
--- Data for Name: r_discs; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_discs (ch_id, disc_code, disc_name, this_charge_only, this_doc_bonus, other_docs_bonus, charge_dcard, disc_only_with_dcard, charge_after_close, priority, allow_discs, shed1, shed2, shed3, b_date, e_date, gen_procs, in_use, doc_code, simple_disc, save_disc_to_dcard, save_bonus_to_dcard, disc_from_dcard, re_process_pos_discs, valid_ours, valid_stocks, auto_sel_discs, short_cut, notes, group_disc, print_in_cheque, allow_zero_price, redistribute_disc_sum_in_busket, disc_ext_code, allow_edit_qty) FROM stdin;
-\.
-
-
---
--- Data for Name: r_emps; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_emps (ch_id, emp_id, emp_name, ua_emp_name, emp_last_name, emp_first_name, emp_par_name, ua_emp_last_name, ua_emp_first_name, ua_emp_par_name, emp_initials, ua_emp_initials, tax_code, emp_sex, birth_day, file1, file2, file3, education, family_status, birth_place, phone, in_phone, mobile, e_mail, percent1, percent2, percent3, notes, mil_status, mil_fitness, mil_rank, mil_special_calc, mil_profes, mil_calc_grp, mil_calc_cat, mil_staff, mil_reg_office, mil_num, pass_no, pass_ser, pass_date, pass_dept, dis_num, pens_num, work_book_no, work_book_ser, per_file_no, in_stop_list, bar_code, shift_post_id, is_citizen, cert_insur_ser, cert_insur_num) FROM stdin;
-\.
-
-
---
--- Data for Name: r_oper_crs; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_oper_crs (cr_id, oper_id, cr_oper_id, oper_max_qty, can_edit_discount, cr_visible, oper_pwd, allow_cheque_close, allow_add_to_cheque_from_cat) FROM stdin;
-\.
-
-
---
--- Data for Name: r_opers; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_opers (ch_id, oper_id, oper_name, oper_pwd, emp_id, cr_admin, oper_lock_pwd) FROM stdin;
-\.
-
-
---
--- Data for Name: r_pay_forms; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_pay_forms (ch_id, pay_form_code, pay_form_name, notes, sumlabel, notes_label, can_enter_notes, notes_mask, can_enter_sum, max_qty, is_default, for_sale, for_ret, auto_calc_sum, dc_type_gcode, group_pays) FROM stdin;
-\.
-
-
---
--- Data for Name: r_pls; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_pls (ch_id, pl_id, pl_name, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_pos_pays; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_pos_pays (ch_id, pos_pay_id, pos_pay_name, pos_pay_class, pos_pay_port, pos_pay_timeout, notes, use_grp_card_for_discs, use_union_cheque, print_tran_info_in_cheque, ip, net_port) FROM stdin;
-\.
-
-
---
--- Data for Name: r_processings; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_processings (ch_id, processing_id, processing_name, processing_type, ip, net_port, path, max_difference, multiplicity, retry_time, retry_period, extra_info) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_a; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_a (ch_id, p_gr_a_id, p_gr_a_name, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_c; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_c (ch_id, p_cat_id, p_cat_name, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_g; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_g (ch_id, p_gr_id, p_gr_name, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_g1; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_g1 (ch_id, p_gr_id1, p_gr_name1, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_g2; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_g2 (ch_id, p_gr_id2, p_gr_name2, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_g3; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_g3 (ch_id, p_gr_id3, p_gr_name3, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_mp; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_mp (prod_id, pl_id, price_mc, notes, curr_id) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prod_mq; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prod_mq (prod_id, um, qty, weight, notes, bar_code, prod_bar_code, pl_id, state) FROM stdin;
-\.
-
-
---
--- Data for Name: r_prods; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_prods (ch_id, prod_id, prod_name, um, country, notes, p_cat_id, p_gr_id, article1, article2, article3, weight, age, price_with_tax, note1, note2, note3, min_price_mc, max_price_mc, min_rem, cst_dty, cst_prc, cst_exc, std_extra_r, std_extra_e, max_extra, min_extra, use_alts, use_crts, p_gr_id1, p_gr_id2, p_gr_id3, p_gr_a_id, p_b_gr_id, l_exp_set, e_exp_set, in_rems, is_dec_qty, file1, file2, file3, auto_set, extra1, extra2, extra3, extra4, extra5, norma1, norma2, norma3, norma4, norma5, rec_min_price_cc, rec_max_price_cc, rec_std_price_cc, rec_rem_qty, in_stop_list, prepare_time, scale_gr_id, scale_standard, scale_conditions, scale_components, tax_free_reason, cst_prod_code, tax_type_id, cst_dty2) FROM stdin;
-\.
-
-
---
--- Data for Name: r_states; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_states (ch_id, state_code, state_name, state_info, can_change_doc) FROM stdin;
-\.
-
-
---
--- Data for Name: r_stocks; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_stocks (ch_id, stock_id, stock_name, stock_g_id, notes, pl_id, emp_id, is_wholesale, address, stock_tax_id) FROM stdin;
-\.
-
-
---
--- Data for Name: r_tax_rates; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_tax_rates (tax_type_id, ch_date, tax_percent) FROM stdin;
-\.
-
-
---
--- Data for Name: r_taxes; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_taxes (tax_type_id, tax_name, tax_desc, tax_id, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: r_users; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.r_users (ch_id, user_id, user_name, emp_id, admin, active, emps, s_pp_acc, s_cost, s_cc_pl, s_cc_price, s_cc_discount, valid_ours, valid_stocks, valid_pls, valid_prods, can_copy_rems, b_date, e_date, use_open_age, can_init_alts_pl, show_pl_cange, can_change_status, can_change_discount, can_print_doc, can_buff_doc, can_change_doc_id, can_change_kurs_mc, allow_rest_edit_desk, allow_rest_reserve, allow_rest_move, can_export_print, p_salary_acc, allow_rest_cheque_unite, allow_rest_cheque_del, open_age_b_type, open_age_b_qty, open_age_e_type, open_age_e_qty, allow_rest_view_desk) FROM stdin;
-\.
-
-
---
--- Data for Name: t_cr_journal; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_cr_journal (ch_id, cr_id, serial_id, fiscal_id, data, doc_type_id, doc_subtype_id, xml_doc_id, doc_code, doc_ch_id, doc_time, is_finished) FROM stdin;
-\.
-
-
---
--- Data for Name: t_cr_journal_doc_subtypes; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_cr_journal_doc_subtypes (doc_subtype_id, doc_subtype_name) FROM stdin;
-\.
-
-
---
--- Data for Name: t_cr_journal_doc_types; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_cr_journal_doc_types (doc_type_id, doc_type_name) FROM stdin;
-\.
-
-
---
--- Data for Name: t_cr_journal_text; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_cr_journal_text (ch_id, cr_id, serial_id, fiscal_id, text_data, doc_type_id, doc_subtype_id, cr_doc_id, doc_code, doc_ch_id, doc_time, is_finished) FROM stdin;
-\.
-
-
---
--- Data for Name: t_prods_complex_mechanics; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_prods_complex_mechanics (prod_id) FROM stdin;
-\.
-
-
---
--- Data for Name: t_prods_reg_discount; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_prods_reg_discount (prod_id, new_price, type_action, is_qty_action, qty_action) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale (ch_id, doc_id, doc_date, kurs_mc, our_id, stock_id, comp_id, code_id1, code_id2, code_id3, code_id4, code_id5, discount, notes, cr_id, oper_id, credit_id, doc_time, tax_doc_id, tax_doc_date, d_card_id, emp_id, int_doc_id, cash_sum_cc, change_sum_cc, curr_id, t_sum_cc_nt, t_tax_sum, t_sum_cc_wt, state_code, desk_code, visitors, t_pur_sum_cc_nt, t_pur_tax_sum, t_pur_sum_cc_wt, doc_create_time, t_real_sum, t_levy_sum, extra_info, cheque_type_id, inet_order_num, extra_info2) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_c; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_c (ch_id, src_pos_id, prod_id, um, qty, price_cc_nt, sum_cc_nt, tax, tax_sum, price_cc_wt, sum_cc_wt, bar_code, c_reason_id, emp_id, create_time, modify_time) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_d; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_d (ch_id, src_pos_id, prod_id, pp_id, um, qty, price_cc_nt, sum_cc_nt, tax, tax_sum, price_cc_wt, sum_cc_wt, bar_code, sec_id, pur_price_cc_nt, pur_tax, pur_price_cc_wt, pl_id, discount, emp_id, create_time, modify_time, tax_type_id, cr_price_cc_wt, cr_tax, cr_price_cc_nt, cr_sum_cc_wt, cr_tax_sum, cr_sum_cc_nt, real_price, real_sum) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_pays; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_pays (ch_id, src_pos_id, pay_form_code, sum_cc_wt, notes, pos_pay_id, pos_pay_doc_id, pos_pay_rrn, cheque_text, pos_pay_text) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_temp; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_temp (ch_id, cr_id, doc_date, doc_time, doc_state, rate_mc, code_id1, code_id2, code_id3, code_id4, code_id5, credit_id, d_card_id, discount, notes, desk_code, oper_id, visitors, cash_sum_cc, change_sum_cc, sale_doc_id, emp_id, is_printed, our_id, stock_id, extra_info, cheque_type_id, inet_order_num, extra_info2) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_temp_d; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_temp_d (ch_id, src_pos_id, prod_id, um, qty, real_qty, price_cc_wt, sum_cc_wt, pur_pricecc_wt, pur_sumcc_wt, bar_code, real_bar_code, pl_id, use_to_bar_qty, pos_status, serving_time, c_src_pos_id, serving_id, c_reason_id, print_time, can_edit_qty, emp_id, emp_name, create_time, modify_time, tax_type_id, cr_price_cc_wt, allow_zero_price) FROM stdin;
-\.
-
-
---
--- Data for Name: t_sale_temp_pays; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_sale_temp_pays (ch_id, src_pos_id, pay_form_code, sum_cc_wt, notes, pos_pay_id, pos_pay_doc_id, pos_pay_rrn, print_state, cheque_text, pos_pay_text) FROM stdin;
-\.
-
-
---
--- Data for Name: t_z_rep; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_z_rep (ch_id, doc_date, doc_time, cr_id, oper_id, our_id, doc_id, fac_id, fin_id, z_rep_num, sum_cc_wt, sum_a, sum_b, sum_c, sum_d, ret_sum_a, ret_sum_b, ret_sum_c, ret_sum_d, sum_cash, sum_card, sum_credit, sum_cheque, sum_other, ret_sum_cash, ret_sum_card, ret_sum_credit, ret_sum_cheque, ret_sum_other, sum_mon_rec, sum_mon_exp, sum_rem, notes, sum_e, sum_f, ret_sum_e, ret_sum_f, tax_a, tax_b, tax_c, tax_d, tax_e, tax_f, ret_tax_a, ret_tax_b, ret_tax_c, ret_tax_d, ret_tax_e, ret_tax_f) FROM stdin;
-\.
-
-
---
--- Data for Name: t_z_rep_t; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.t_z_rep_t (ch_id, doc_date, doc_time, doc_id, our_id, cr_id, oper_id, pos_pay_id, cheques_count, cheques_count_sale, sum_card, cheques_count_ret, ret_sum_card) FROM stdin;
-\.
-
-
---
--- Data for Name: z_doc_dc; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_doc_dc (doc_code, ch_id, d_card_id) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_disc_exp; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_disc_exp (log_id, d_card_id, temp_bonus, doc_code, ch_id, src_pos_id, disc_code, sum_bonus, discount, log_date, bonus_type, group_sum_bonus, group_discount, d_bi_id) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_disc_exp_p; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_disc_exp_p (d_bi_id, log_id, doc_code, ch_id, src_pos_id, disc_code, d_card_id, sum_bonus, log_date) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_disc_rec; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_disc_rec (log_id, d_card_id, temp_bonus, doc_code, ch_id, src_pos_id, disc_code, sum_bonus, log_date, bonus_type, sale_src_pos_id, d_bi_id) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_metrics; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_metrics (d_bi_id, log_id_ex, doc_code, ch_id, cr_id, event_id, create_time, is_finished, notes) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_processings; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_processings (ch_id, doc_code, card_info, rrn, status, msg) FROM stdin;
-\.
-
-
---
--- Data for Name: z_log_tools; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_log_tools (log_id, doc_date, rep_tool_code, note1, note2, note3, user_code) FROM stdin;
-\.
-
-
---
--- Data for Name: z_metrica_events; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_metrica_events (event_id, event_name, enabled) FROM stdin;
-\.
-
-
---
--- Data for Name: z_vars; Type: TABLE DATA; Schema: public; Owner: tc_client
---
-
-COPY public.z_vars (var_name, var_desc, var_value, var_info, var_type, var_page_code, var_group, var_pos_id, label_pos, var_ext_info, var_sel_type, app_code, object_def) FROM stdin;
-\.
-
-
---
--- Name: ppos_ppos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tc_client
---
-
-SELECT pg_catalog.setval('public.ppos_ppos_id_seq', 3, true);
-
-
---
--- Name: r_dc_group_ch_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tc_client
---
-
-SELECT pg_catalog.setval('public.r_dc_group_ch_id_seq', 1, false);
-
-
---
--- Name: z_log_tools_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tc_client
---
-
-SELECT pg_catalog.setval('public.z_log_tools_log_id_seq', 1, false);
-
 
 --
 -- Name: r_oper_crs _pk_r_crmo; Type: CONSTRAINT; Schema: public; Owner: tc_client
@@ -2201,7 +1811,7 @@ ALTER TABLE ONLY public.r_crpos_pays
 --
 
 ALTER TABLE ONLY public.r_crs
-    ADD CONSTRAINT pk_r_crs PRIMARY KEY (crid);
+    ADD CONSTRAINT pk_r_crs PRIMARY KEY (cr_id);
 
 
 --
@@ -2485,11 +2095,27 @@ ALTER TABLE ONLY public.t_z_rep_t
 
 
 --
+-- Name: z_apps pk_z_apps; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_apps
+    ADD CONSTRAINT pk_z_apps PRIMARY KEY (app_code);
+
+
+--
 -- Name: z_doc_dc pk_z_docdc; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
 ALTER TABLE ONLY public.z_doc_dc
     ADD CONSTRAINT pk_z_docdc PRIMARY KEY (doc_code, ch_id, d_card_id);
+
+
+--
+-- Name: z_docs pk_z_docs; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_docs
+    ADD CONSTRAINT pk_z_docs PRIMARY KEY (doc_code);
 
 
 --
@@ -2549,6 +2175,22 @@ ALTER TABLE ONLY public.z_metrica_events
 
 
 --
+-- Name: z_tool_rep pk_z_toolrep; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_tool_rep
+    ADD CONSTRAINT pk_z_toolrep PRIMARY KEY (rep_tool_code);
+
+
+--
+-- Name: z_var_pages pk_z_varpages; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_var_pages
+    ADD CONSTRAINT pk_z_varpages PRIMARY KEY (var_page_code);
+
+
+--
 -- Name: ppos ppos_ppo_number_key; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
@@ -2605,6 +2247,22 @@ ALTER TABLE ONLY public.t_cr_journal_text
 
 
 --
+-- Name: t_cr_journal_text fk_t_crjournaltext_z_docs; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.t_cr_journal_text
+    ADD CONSTRAINT fk_t_crjournaltext_z_docs FOREIGN KEY (doc_code) REFERENCES public.z_docs(doc_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: z_doc_dc fk_z_docdc_z_docs; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_doc_dc
+    ADD CONSTRAINT fk_z_docdc_z_docs FOREIGN KEY (doc_code) REFERENCES public.z_docs(doc_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: z_log_disc_exp fk_z_logdiscexp_r_discs; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
 --
 
@@ -2621,11 +2279,51 @@ ALTER TABLE ONLY public.z_log_disc_rec
 
 
 --
+-- Name: z_log_metrics fk_z_logmetrics_r_crs; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_log_metrics
+    ADD CONSTRAINT fk_z_logmetrics_r_crs FOREIGN KEY (cr_id) REFERENCES public.r_crs(cr_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: z_log_metrics fk_z_logmetrics_z_docs; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_log_metrics
+    ADD CONSTRAINT fk_z_logmetrics_z_docs FOREIGN KEY (doc_code) REFERENCES public.z_docs(doc_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: z_log_metrics fk_z_logmetrics_z_metricaevents; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
 --
 
 ALTER TABLE ONLY public.z_log_metrics
     ADD CONSTRAINT fk_z_logmetrics_z_metricaevents FOREIGN KEY (event_id) REFERENCES public.z_metrica_events(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: z_log_tools fk_z_logtools_z_toolrep; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_log_tools
+    ADD CONSTRAINT fk_z_logtools_z_toolrep FOREIGN KEY (rep_tool_code) REFERENCES public.z_tool_rep(rep_tool_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: z_vars fk_z_vars_z_apps; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_vars
+    ADD CONSTRAINT fk_z_vars_z_apps FOREIGN KEY (app_code) REFERENCES public.z_apps(app_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: z_vars fk_z_vars_z_varpages; Type: FK CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.z_vars
+    ADD CONSTRAINT fk_z_vars_z_varpages FOREIGN KEY (var_page_code) REFERENCES public.z_var_pages(var_page_code) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
