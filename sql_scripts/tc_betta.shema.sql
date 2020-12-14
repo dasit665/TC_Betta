@@ -105,6 +105,65 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: ir_charity; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.ir_charity (
+    ch_id integer NOT NULL,
+    charity_id integer NOT NULL,
+    name character varying(200) NOT NULL,
+    b_date timestamp with time zone,
+    e_date timestamp with time zone,
+    account character varying(100) NOT NULL,
+    in_use boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.ir_charity OWNER TO tc_client;
+
+--
+-- Name: ir_not_disc_prods; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.ir_not_disc_prods (
+    prod_id integer NOT NULL
+);
+
+
+ALTER TABLE public.ir_not_disc_prods OWNER TO tc_client;
+
+--
+-- Name: it_processing_charity_d; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.it_processing_charity_d (
+    ch_id integer NOT NULL,
+    src_pos_id integer NOT NULL,
+    charity_id integer NOT NULL,
+    bonus integer NOT NULL
+);
+
+
+ALTER TABLE public.it_processing_charity_d OWNER TO tc_client;
+
+--
+-- Name: it_sale_card_lab_response; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.it_sale_card_lab_response (
+    ch_id integer NOT NULL,
+    bonus_type integer NOT NULL,
+    e_date timestamp with time zone,
+    balance integer,
+    active_balance integer,
+    inactive_balance integer,
+    priority integer
+);
+
+
+ALTER TABLE public.it_sale_card_lab_response OWNER TO tc_client;
+
+--
 -- Name: logs; Type: TABLE; Schema: public; Owner: tc_client
 --
 
@@ -630,6 +689,42 @@ CREATE TABLE public.r_emps (
 
 
 ALTER TABLE public.r_emps OWNER TO tc_client;
+
+--
+-- Name: r_group_mdc; Type: TABLE; Schema: public; Owner: tc_client
+--
+
+CREATE TABLE public.r_group_mdc (
+    ch_id integer NOT NULL,
+    d_card_id character varying(42) NOT NULL,
+    dc_group_code integer NOT NULL,
+    in_use integer NOT NULL,
+    date_create timestamp with time zone NOT NULL,
+    user_create character varying(150) NOT NULL,
+    date_change timestamp with time zone NOT NULL,
+    user_change character varying(150) NOT NULL,
+    pgr_id integer,
+    discount numeric(21,9),
+    dop_discount numeric(21,9),
+    row_id bytea[]
+);
+
+
+ALTER TABLE public.r_group_mdc OWNER TO tc_client;
+
+--
+-- Name: r_group_mdc_ch_id_seq; Type: SEQUENCE; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE public.r_group_mdc ALTER COLUMN ch_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.r_group_mdc_ch_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
 
 --
 -- Name: r_oper_crs; Type: TABLE; Schema: public; Owner: tc_client
@@ -1783,6 +1878,38 @@ ALTER TABLE ONLY public.z_vars
 
 
 --
+-- Name: ir_charity pk_ir_charity; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.ir_charity
+    ADD CONSTRAINT pk_ir_charity PRIMARY KEY (charity_id);
+
+
+--
+-- Name: ir_not_disc_prods pk_ir_notdiscprods; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.ir_not_disc_prods
+    ADD CONSTRAINT pk_ir_notdiscprods PRIMARY KEY (prod_id);
+
+
+--
+-- Name: it_processing_charity_d pk_it_processingcharityd; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.it_processing_charity_d
+    ADD CONSTRAINT pk_it_processingcharityd PRIMARY KEY (ch_id, charity_id);
+
+
+--
+-- Name: it_sale_card_lab_response pk_it_salecardlabresponse; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.it_sale_card_lab_response
+    ADD CONSTRAINT pk_it_salecardlabresponse PRIMARY KEY (ch_id, bonus_type);
+
+
+--
 -- Name: r_d_cards pk_r_compmdc; Type: CONSTRAINT; Schema: public; Owner: tc_client
 --
 
@@ -1868,6 +1995,14 @@ ALTER TABLE ONLY public.r_discs
 
 ALTER TABLE ONLY public.r_emps
     ADD CONSTRAINT pk_r_emps PRIMARY KEY (emp_id);
+
+
+--
+-- Name: r_group_mdc pk_r_groupmdc; Type: CONSTRAINT; Schema: public; Owner: tc_client
+--
+
+ALTER TABLE ONLY public.r_group_mdc
+    ADD CONSTRAINT pk_r_groupmdc PRIMARY KEY (ch_id);
 
 
 --
